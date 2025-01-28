@@ -1,0 +1,75 @@
+version: "3.2"
+
+services:
+#postainer admin
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    hostname: portainer
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    ports:
+      - "9000:9000"
+    networks:
+      webserver_network:
+        ipv4_address: "192.170.0.4"
+#MariaDB Container
+  mariadb:
+    image: mariadb:10.7
+    container_name: mariadb
+    hostname: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - F:/GLPI_SERVICE/mysql_data:/var/lib/mysql
+    env_file:
+      - F:/GLPI_SERVICE/mariadb.env
+    restart: always
+    networks:
+      webserver_network:
+        ipv4_address: "192.170.0.2"
+
+#GLPI Container
+  glpi:
+    image: diouxx/glpi:php7.4
+    container_name : glpi
+    hostname: glpi_service  
+    ports:
+      - "8085:80"
+      - "80:80"
+#      - "62354:62354"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - F:/GLPI_SERVICE/glpi/:/var/www/html/glpi
+    environment:
+      - TIMEZONE=Europe/Moscow
+      - VERSION_GLPI=10.0.6
+    restart: always
+    depends_on:
+      - mariadb
+    networks:
+      webserver_network:
+        ipv4_address: "192.170.0.3"
+#fusioninventory       
+ # fusioninventory:
+  #  build:
+  #    context: ./files_docker_fusioninventory
+ #   ports:
+ #      - 127.0.0.1:9999:62354
+ #   restart: unless-stopped  
+#    container_name: fusioninventory_glpi
+  #  networks:
+ #    webserver_network:
+ #      ipv4_address: "192.170.0.4"      
+networks:
+  webserver_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.170.0.0/16"
