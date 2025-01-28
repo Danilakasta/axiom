@@ -25,9 +25,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - F:/GLPI_SERVICE/mysql_data:/var/lib/mysql
+      - /var/lib/mysql:/var/lib/mysql
     env_file:
-      - F:/GLPI_SERVICE/mariadb.env
+      - ./mariadb.env
     restart: always
     networks:
       webserver_network:
@@ -45,7 +45,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - F:/GLPI_SERVICE/glpi/:/var/www/html/glpi
+      - /var/www/html/glpi:/var/www/html/glpi
     environment:
       - TIMEZONE=Europe/Moscow
       - VERSION_GLPI=10.0.6
