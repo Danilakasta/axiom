@@ -40,7 +40,6 @@ services:
     hostname: glpi_service  
     ports:
       - "8085:80"
-      - "80:80"
 #      - "62354:62354"
     volumes:
       - /etc/timezone:/etc/timezone:ro
